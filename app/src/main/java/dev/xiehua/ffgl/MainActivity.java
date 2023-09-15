@@ -1,10 +1,12 @@
-package com.player.ffmpeg;
+package dev.xiehua.ffgl;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
+
+import dev.xiehua.ffgl.R;
 
 public class MainActivity extends Activity {
 	// private static final String TAG = "MainActivity";

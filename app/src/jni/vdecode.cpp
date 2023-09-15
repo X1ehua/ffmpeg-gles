@@ -1,3 +1,5 @@
+#include <unistd.h>
+
 #include "player.h"
 
 static int img_convert(AVPicture *dst, int dst_pix_fmt, const AVPicture *src,

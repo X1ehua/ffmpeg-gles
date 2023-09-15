@@ -1,4 +1,4 @@
-#include "com_player_ffmpeg_VideoSurface.h"
+#include "dev_xiehua_ffgl_VideoSurface.h"
 #include <jni.h>
 
 // for native window JNI
@@ -134,10 +134,10 @@ int eglClose() {
 }
 
 /*
- * Class:     com_player_ffmpeg_VideoSurface
+ * Class:     dev_xiehua_ffgl_VideoSurface
  * Method:    setSurface
  * Signature: (Landroid/view/Surface;)I
- */JNIEXPORT jint JNICALL Java_com_player_ffmpeg_VideoSurface_setSurface(
+ */JNIEXPORT jint JNICALL Java_dev_xiehua_ffgl_VideoSurface_setSurface(
 		JNIEnv *env, jobject obj, jobject surface) {
 
 	pthread_t thread_1;
@@ -145,7 +145,7 @@ int eglClose() {
 	//LOGV("fun env is %p", env);
 
 	jclass localVideoSurfaceClass = env->FindClass(
-			"com/player/ffmpeg/VideoSurface");
+			"dev/xiehua/ffgl/VideoSurface");
 	if (NULL == localVideoSurfaceClass) {
 		LOGV("FindClass VideoSurface failure.");
 		return -1;
@@ -185,30 +185,30 @@ int eglClose() {
 }
 
 /*
- * Class:     com_player_ffmpeg_VideoSurface
+ * Class:     dev_xiehua_ffgl_VideoSurface
  * Method:    onPause
  * Signature: ()I
- */JNIEXPORT jint JNICALL Java_com_player_ffmpeg_VideoSurface_nativePausePlayer(
+ */JNIEXPORT jint JNICALL Java_dev_xiehua_ffgl_VideoSurface_nativePausePlayer(
 		JNIEnv *, jobject) {
 	global_context.pause = 1;
 	return 0;
 }
 
 /*
- * Class:     com_player_ffmpeg_VideoSurface
+ * Class:     dev_xiehua_ffgl_VideoSurface
  * Method:    onResume
  * Signature: ()I
- */JNIEXPORT jint JNICALL Java_com_player_ffmpeg_VideoSurface_nativeResumePlayer(
+ */JNIEXPORT jint JNICALL Java_dev_xiehua_ffgl_VideoSurface_nativeResumePlayer(
 		JNIEnv *, jobject) {
 	global_context.pause = 0;
 	return 0;
 }
 
 /*
- * Class:     com_player_ffmpeg_VideoSurface
+ * Class:     dev_xiehua_ffgl_VideoSurface
  * Method:    onDestroy
  * Signature: ()I
- */JNIEXPORT jint JNICALL Java_com_player_ffmpeg_VideoSurface_nativeStopPlayer(
+ */JNIEXPORT jint JNICALL Java_dev_xiehua_ffgl_VideoSurface_nativeStopPlayer(
 		JNIEnv *, jobject) {
 	global_context.quit = 1;
 	return 0;

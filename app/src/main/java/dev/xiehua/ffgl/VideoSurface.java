@@ -1,4 +1,4 @@
-package com.player.ffmpeg;
+package dev.xiehua.ffgl;
 
 import android.content.Context;
 import android.util.Log;

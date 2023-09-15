@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <signal.h>
+#include <unistd.h>
 
 #include "player.h"
 
-#define TEST_FILE_TFCARD "/mnt/extSdCard/clear.ts"
+// #define TEST_FILE_TFCARD "/mnt/extSdCard/clear.ts"
+#define TEST_FILE_TFCARD "/sdcard/DCIM/Camera/video_20230902_053019_edit.mp4"
 
 GlobalContext global_context;
 
