@@ -24,11 +24,15 @@ void* video_decode_render_thread(void *argv) {
 	AVPacket *packet = &pkt1;
 	int frameFinished;
 	AVFrame *pFrame;
-	double pts;
+	// double pts;
 
 	EGLBoolean success = eglMakeCurrent(global_context.eglDisplay,
 			global_context.eglSurface, global_context.eglSurface,
 			global_context.eglContext);
+	if (!success) {
+		av_log(NULL, AV_LOG_ERROR, "eglMakeCurrent() failed");
+		return 0;
+	}
 
 	CreateProgram();
 
@@ -60,8 +64,8 @@ void* video_decode_render_thread(void *argv) {
 		// Did we get a video frame?
 		if (frameFinished) {
 			AVPicture pict;
-			uint8_t *dst_data[4];
-			int dst_linesize[4];
+			// uint8_t *dst_data[4];
+			// int dst_linesize[4];
 
 			av_image_alloc(pict.data, pict.linesize,
 					global_context.vcodec_ctx->width,
@@ -89,4 +93,3 @@ void* video_decode_render_thread(void *argv) {
 
 	return 0;
 }
-

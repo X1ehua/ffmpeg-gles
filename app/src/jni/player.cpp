@@ -4,9 +4,11 @@
 
 #include "player.h"
 
-// #define TEST_FILE_TFCARD "/mnt/extSdCard/clear.ts"
-//#define TEST_FILE_TFCARD "/sdcard/Movies/CCLive-1007-214743.mp4"
-#define TEST_FILE_TFCARD "/sdcard/Movies/10s.mp4"
+// #define MP4_URI "/mnt/extSdCard/clear.ts"
+//#define MP4_URI "/sdcard/Movies/CCLive-1007-214743.mp4"
+//#define MP4_URI "/sdcard/Movies/10s.mp4"
+//#define MP4_URI "http://mozicode.com/garfield.mp4"
+#define MP4_URI "http://mozicode.com/10s.mp4"
 
 #include <android/log.h>
 #define LOGW(...) __android_log_print(ANDROID_LOG_WARN, "FFGL", __VA_ARGS__)
@@ -52,7 +54,7 @@ void* open_media(void *argv) {
 
 	fmt_ctx = avformat_alloc_context();
 
-	err = avformat_open_input(&fmt_ctx, TEST_FILE_TFCARD, NULL, NULL);
+	err = avformat_open_input(&fmt_ctx, MP4_URI, NULL, NULL);
 	if (err < 0) {
 		char errbuf[64];
 		av_strerror(err, errbuf, 64);

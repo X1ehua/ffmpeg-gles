@@ -57,7 +57,7 @@ typedef struct PacketQueue {
 	int size;
 	int abort_request;
 	int serial;
-	pthread_mutex_t *mutex;
+	pthread_mutex_t mutex;
 } PacketQueue;
 
 typedef struct GlobalContexts {

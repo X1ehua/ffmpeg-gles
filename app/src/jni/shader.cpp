@@ -158,8 +158,7 @@ void setUniforms(int uTextureUnitLocation, int textureId) {
 }
 
 void Render(uint8_t *pixel) {
-	GLfloat vVertices[] = { 0.0f, 0.5f, 0.0f, -0.5f, -0.5f, 0.0f, 0.5f, -0.5f,
-			0.0f };
+	// GLfloat vVertices[] = { 0.0f, 0.5f, 0.0f, -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f };
 
 	// Set the viewport
 	glViewport(0, 0, global_context.vcodec_ctx->width,
