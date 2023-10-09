@@ -10,7 +10,7 @@ public class VideoSurface extends SurfaceView implements SurfaceHolder.Callback 
 	private static final String TAG = "VideoSurface";
 
 	static {
-		System.loadLibrary("ffmpeg");
+		//System.loadLibrary("ffmpeg");
 		System.loadLibrary("videosurface");
 	}
 

@@ -5,7 +5,11 @@
 #include "player.h"
 
 // #define TEST_FILE_TFCARD "/mnt/extSdCard/clear.ts"
-#define TEST_FILE_TFCARD "/sdcard/DCIM/Camera/video_20230902_053019_edit.mp4"
+//#define TEST_FILE_TFCARD "/sdcard/Movies/CCLive-1007-214743.mp4"
+#define TEST_FILE_TFCARD "/sdcard/Movies/10s.mp4"
+
+#include <android/log.h>
+#define LOGW(...) __android_log_print(ANDROID_LOG_WARN, "FFGL", __VA_ARGS__)
 
 GlobalContext global_context;
 
@@ -16,15 +20,15 @@ static void sigterm_handler(int sig) {
 
 static void ffmpeg_log_callback(void *ptr, int level, const char *fmt,
 		va_list vl) {
-	//__android_log_vprint(ANDROID_LOG_DEBUG, "FFmpeg", fmt, vl);
+	//__android_log_print(ANDROID_LOG_DEBUG, "FFmpeg", fmt, vl);
 }
 
 void* open_media(void *argv) {
-	int i;
+	unsigned int i;
 	int err = 0;
-	int framecnt;
+//	int framecnt;
 	AVFormatContext *fmt_ctx = NULL;
-	AVDictionaryEntry *dict = NULL;
+//	AVDictionaryEntry *dict = NULL;
 	AVPacket pkt;
 	int video_stream_index = -1;
 	pthread_t thread;
@@ -70,6 +74,7 @@ void* open_media(void *argv) {
 		// because video stream only one, so found and stop.
 		if (fmt_ctx->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
 			video_stream_index = i;
+			LOGW(">> video_stream_index %d", video_stream_index);
 			break;
 		}
 	}
@@ -111,11 +116,16 @@ void* open_media(void *argv) {
 	}
 
 	if (-1 != video_stream_index) {
-		pthread_create(&thread, NULL, video_thread, NULL);
+		pthread_create(&thread, NULL, video_decode_render_thread, NULL);
 	}
+	packet_queue_init(&global_context.video_queue);
 
+    static int sum[2] = {0};
 	// read url media data circle
 	while ((av_read_frame(fmt_ctx, &pkt) >= 0) && (!global_context.quit)) {
+        sum[pkt.stream_index] += pkt.size;
+		LOGW(">> pkt size %d, sum %d+%d=%d, st_idx %d [video_index %d]",
+             pkt.size, sum[0], sum[1], sum[0]+sum[1], pkt.stream_index, video_stream_index);
 		if (pkt.stream_index == video_stream_index) {
 			packet_queue_put(&global_context.video_queue, &pkt);
 		} else {

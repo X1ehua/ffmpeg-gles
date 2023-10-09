@@ -19,7 +19,7 @@ static int img_convert(AVPicture *dst, int dst_pix_fmt, const AVPicture *src,
 	return 0;
 }
 
-void* video_thread(void *argv) {
+void* video_decode_render_thread(void *argv) {
 	AVPacket pkt1;
 	AVPacket *packet = &pkt1;
 	int frameFinished;
@@ -37,7 +37,7 @@ void* video_thread(void *argv) {
 	for (;;) {
 
 		if (global_context.quit) {
-			av_log(NULL, AV_LOG_ERROR, "video_thread need exit. \n");
+			av_log(NULL, AV_LOG_ERROR, "video_decode_render_thread need exit. \n");
 			break;
 		}
 

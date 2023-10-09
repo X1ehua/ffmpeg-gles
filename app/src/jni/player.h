@@ -29,7 +29,7 @@ extern "C" {
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 
-#include "config.h"
+#include "libffmpeg/config.h"
 
 #include "libavutil/log.h"
 #include "libavutil/time.h"
@@ -87,7 +87,7 @@ void packet_queue_init(PacketQueue *q);
 int packet_queue_get(PacketQueue *q, AVPacket *pkt);
 int packet_queue_put(PacketQueue *q, AVPacket *pkt);
 
-void* video_thread(void *argv);
+void* video_decode_render_thread(void *argv);
 void* open_media(void *argv);
 int32_t setBuffersGeometry(int32_t width, int32_t height);
 void renderSurface(uint8_t *pixel);
