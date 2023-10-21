@@ -54,12 +54,9 @@ void* video_decode_render_thread(void *argv) {
 			continue;
 		}
 
-		avcodec_decode_video2(global_context.vcodec_ctx, pFrame, &frameFinished,
-				packet);
+		avcodec_decode_video2(global_context.vcodec_ctx, pFrame, &frameFinished, packet);
 
-		/*av_log(NULL, AV_LOG_ERROR,
-		 "packet_queue_get size is %d, format is %d\n", packet->size,
-		 pFrame->format);*/
+		//av_log(NULL, AV_LOG_ERROR, "packet_queue_get size i%d, format %d\n", packet->size, pFrame->format);
 
 		// Did we get a video frame?
 		if (frameFinished) {
@@ -67,6 +64,10 @@ void* video_decode_render_thread(void *argv) {
 			// uint8_t *dst_data[4];
 			// int dst_linesize[4];
 
+            static int cc = 0;
+            static clock_t t0 = clock();
+            //if (cc++ > 24*1.5)
+                av_log(NULL, AV_LOG_INFO, ">>> video show time: %.3f", ((double)(clock() - t0)) / CLOCKS_PER_SEC);
 			av_image_alloc(pict.data, pict.linesize,
 					global_context.vcodec_ctx->width,
 					global_context.vcodec_ctx->height, AV_PIX_FMT_RGB565LE, 16);

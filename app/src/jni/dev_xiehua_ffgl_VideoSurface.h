@@ -163,7 +163,7 @@ extern "C" {
  * Signature: (Landroid/view/Surface;)I
  */
 JNIEXPORT jint JNICALL Java_dev_xiehua_ffgl_VideoSurface_setSurface
-  (JNIEnv *, jobject, jobject);
+  (JNIEnv *, jobject, jobject, jstring);
 
 /*
  * Class:     dev_xiehua_ffgl_VideoSurface

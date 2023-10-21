@@ -14,7 +14,6 @@ static jclass globalVideoSurfaceClass = NULL;
 static jobject globalVideoSurfaceObject = NULL;
 
 void renderSurface(uint8_t *pixel) {
-
 	if (global_context.quit) {
 		glDisable(GL_TEXTURE_2D);
 		glDeleteTextures(1, &global_context.mTextureID);
@@ -133,26 +132,26 @@ int eglClose() {
 	return 0;
 }
 
+static char videoUri[512] = {0};
+
 /*
  * Class:     dev_xiehua_ffgl_VideoSurface
  * Method:    setSurface
  * Signature: (Landroid/view/Surface;)I
- */JNIEXPORT jint JNICALL Java_dev_xiehua_ffgl_VideoSurface_setSurface(
-		JNIEnv *env, jobject obj, jobject surface) {
+ */
+JNIEXPORT jint JNICALL Java_dev_xiehua_ffgl_VideoSurface_setSurface(
+		JNIEnv *env, jobject obj, jobject surface, jstring uri) {
 
 	pthread_t thread_1;
-
 	//LOGV("fun env is %p", env);
 
-	jclass localVideoSurfaceClass = env->FindClass(
-			"dev/xiehua/ffgl/VideoSurface");
+	jclass localVideoSurfaceClass = env->FindClass("dev/xiehua/ffgl/VideoSurface");
 	if (NULL == localVideoSurfaceClass) {
 		LOGV("FindClass VideoSurface failure.");
 		return -1;
 	}
 
-	globalVideoSurfaceClass = (jclass) env->NewGlobalRef(
-			localVideoSurfaceClass);
+	globalVideoSurfaceClass = (jclass) env->NewGlobalRef(localVideoSurfaceClass);
 	if (NULL == globalVideoSurfaceClass) {
 		LOGV("localVideoSurfaceClass to globalVideoSurfaceClass failure.");
 	}
@@ -179,7 +178,8 @@ int eglClose() {
 	}
 	eglOpen();
 
-	pthread_create(&thread_1, NULL, open_media, NULL);
+	strcpy(videoUri, env->GetStringUTFChars(uri, NULL));
+	pthread_create(&thread_1, NULL, open_media, &videoUri[0]);
 
 	return 0;
 }
@@ -188,8 +188,8 @@ int eglClose() {
  * Class:     dev_xiehua_ffgl_VideoSurface
  * Method:    onPause
  * Signature: ()I
- */JNIEXPORT jint JNICALL Java_dev_xiehua_ffgl_VideoSurface_nativePausePlayer(
-		JNIEnv *, jobject) {
+ */
+JNIEXPORT jint JNICALL Java_dev_xiehua_ffgl_VideoSurface_nativePausePlayer(JNIEnv *, jobject) {
 	global_context.pause = 1;
 	return 0;
 }
@@ -198,8 +198,8 @@ int eglClose() {
  * Class:     dev_xiehua_ffgl_VideoSurface
  * Method:    onResume
  * Signature: ()I
- */JNIEXPORT jint JNICALL Java_dev_xiehua_ffgl_VideoSurface_nativeResumePlayer(
-		JNIEnv *, jobject) {
+ */
+JNIEXPORT jint JNICALL Java_dev_xiehua_ffgl_VideoSurface_nativeResumePlayer(JNIEnv *, jobject) {
 	global_context.pause = 0;
 	return 0;
 }
@@ -208,8 +208,8 @@ int eglClose() {
  * Class:     dev_xiehua_ffgl_VideoSurface
  * Method:    onDestroy
  * Signature: ()I
- */JNIEXPORT jint JNICALL Java_dev_xiehua_ffgl_VideoSurface_nativeStopPlayer(
-		JNIEnv *, jobject) {
+ */
+JNIEXPORT jint JNICALL Java_dev_xiehua_ffgl_VideoSurface_nativeStopPlayer(JNIEnv *, jobject) {
 	global_context.quit = 1;
 	return 0;
 }

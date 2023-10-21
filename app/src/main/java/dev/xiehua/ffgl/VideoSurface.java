@@ -10,14 +10,19 @@ public class VideoSurface extends SurfaceView implements SurfaceHolder.Callback 
 	private static final String TAG = "VideoSurface";
 
 	static {
-		//System.loadLibrary("ffmpeg");
-		System.loadLibrary("videosurface");
+		try {
+			//System.loadLibrary("ffmpeg");
+			System.loadLibrary("videosurface");
+			Log.i(TAG, "native libVideoSurface.so loaded");
+		}
+		catch (Exception e) {
+			Log.e(TAG, "load native .so failed: " + e.toString());
+		}
 	}
 
 	public VideoSurface(Context context) {
 		super(context);
 		Log.v(TAG, "VideoSurface");
-
 		getHolder().addCallback(this);
 	}
 
@@ -33,7 +38,7 @@ public class VideoSurface extends SurfaceView implements SurfaceHolder.Callback 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		Log.v(TAG, "surfaceCreated");
-		setSurface(holder.getSurface());
+		setSurface(holder.getSurface(), "http://mozicode.com/10s.mp4");
 	}
 
 	@Override
@@ -54,7 +59,7 @@ public class VideoSurface extends SurfaceView implements SurfaceHolder.Callback 
 		return nativeStopPlayer();
 	}
 
-	public native int setSurface(Surface view);
+	public native int setSurface(Surface view, String videoUri);
 
 	public native int nativePausePlayer();
 

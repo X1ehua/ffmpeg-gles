@@ -5,10 +5,10 @@
 #include "player.h"
 
 // #define MP4_URI "/mnt/extSdCard/clear.ts"
-//#define MP4_URI "/sdcard/Movies/CCLive-1007-214743.mp4"
+//#define MP4_URI "/sdcard/DCIM/CCLive/1019-075349.mp4"
 //#define MP4_URI "/sdcard/Movies/10s.mp4"
 //#define MP4_URI "http://mozicode.com/garfield.mp4"
-#define MP4_URI "http://mozicode.com/10s.mp4"
+//#define MP4_URI "http://mozicode.com/10s.mp4"
 
 #include <android/log.h>
 #define LOGW(...) __android_log_print(ANDROID_LOG_WARN, "FFGL", __VA_ARGS__)
@@ -20,9 +20,31 @@ static void sigterm_handler(int sig) {
 	exit(123);
 }
 
-static void ffmpeg_log_callback(void *ptr, int level, const char *fmt,
-		va_list vl) {
-	//__android_log_print(ANDROID_LOG_DEBUG, "FFmpeg", fmt, vl);
+static void ffmpeg_log_callback(void *ptr, int level, const char *fmt, va_list vl) {
+	if (level > AV_LOG_DEBUG) return;
+
+    int droid_log_level = 0;
+	if (level > AV_LOG_DEBUG) {
+		return;
+	}
+	else if (level <= AV_LOG_ERROR) {
+		droid_log_level = ANDROID_LOG_ERROR;
+	}
+	else if (level == AV_LOG_WARNING) {
+		droid_log_level = ANDROID_LOG_WARN;
+	}
+	else if (level == AV_LOG_INFO) {
+		droid_log_level = ANDROID_LOG_INFO;
+	}
+	else if (level == AV_LOG_DEBUG) {
+		droid_log_level = ANDROID_LOG_DEBUG;
+	}
+	else {
+		__android_log_print(AV_LOG_WARNING, "FFGL", "Unknown av_log_level: %d", level);
+		droid_log_level = ANDROID_LOG_WARN;
+	}
+
+	__android_log_vprint(droid_log_level, "FFGL", fmt, vl);
 }
 
 void* open_media(void *argv) {
@@ -54,19 +76,19 @@ void* open_media(void *argv) {
 
 	fmt_ctx = avformat_alloc_context();
 
-	err = avformat_open_input(&fmt_ctx, MP4_URI, NULL, NULL);
+	const char* videoUri = (const char*)argv;
+	//av_log(NULL, AV_LOG_WARNING, ">> videoUri: %s", videoUri);
+	err = avformat_open_input(&fmt_ctx, videoUri, NULL, NULL);
 	if (err < 0) {
-		char errbuf[64];
-		av_strerror(err, errbuf, 64);
-		av_log(NULL, AV_LOG_ERROR, "avformat_open_input : err is %d , %s\n",
-				err, errbuf);
+		char err_buf[256];
+		av_strerror(err, err_buf, 256);
+		av_log(NULL, AV_LOG_ERROR, "avformat_open_input() failed: %s [err %d]", err_buf, err);
 		err = -1;
 		goto failure;
 	}
 
 	if ((err = avformat_find_stream_info(fmt_ctx, NULL)) < 0) {
-		av_log(NULL, AV_LOG_ERROR, "avformat_find_stream_info : err is %d \n",
-				err);
+		av_log(NULL, AV_LOG_ERROR, "avformat_find_stream_info : err %d", err);
 		err = -1;
 		goto failure;
 	}
@@ -93,25 +115,20 @@ void* open_media(void *argv) {
 		global_context.vcodec = avcodec_find_decoder(
 				global_context.vcodec_ctx->codec_id);
 		if (NULL == global_context.vcodec) {
-			av_log(NULL, AV_LOG_ERROR,
-					"avcodec_find_decoder video failure. \n");
+			av_log(NULL, AV_LOG_ERROR, "avcodec_find_decoder video failure.");
 			goto failure;
 		}
 
-		if (avcodec_open2(global_context.vcodec_ctx, global_context.vcodec,
-				NULL) < 0) {
-			av_log(NULL, AV_LOG_ERROR, "avcodec_open2 failure. \n");
+		if (avcodec_open2(global_context.vcodec_ctx, global_context.vcodec, NULL) < 0) {
+			av_log(NULL, AV_LOG_ERROR, "avcodec_open2 failure.");
 			goto failure;
 		}
 
-		if ((global_context.vcodec_ctx->width > 0)
-				&& (global_context.vcodec_ctx->height > 0)) {
-
-			setBuffersGeometry(global_context.vcodec_ctx->width,
-					global_context.vcodec_ctx->height);
+		if ((global_context.vcodec_ctx->width > 0) && (global_context.vcodec_ctx->height > 0)) {
+			setBuffersGeometry(global_context.vcodec_ctx->width, global_context.vcodec_ctx->height);
 		}
 
-		av_log(NULL, AV_LOG_ERROR, "video : width is %d, height is %d . \n",
+		av_log(NULL, AV_LOG_ERROR, "video : width is %d, height is %d .",
 				global_context.vcodec_ctx->width,
 				global_context.vcodec_ctx->height);
 
